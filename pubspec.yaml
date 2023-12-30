@@ -52,6 +52,8 @@ dependencies:
   google_mobile_ads: ^4.0.0
   flutter_riverpod: ^2.4.9
   shared_preferences: ^2.2.2
+  rxdart: ^0.27.7
+  animated_icon: ^0.0.5
 
 
 

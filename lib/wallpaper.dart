@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:wallpaper_app/screens/favourites_screen.dart';
 import 'package:wallpaper_app/screens/gallery_wallpaper.dart';
 import 'package:wallpaper_app/screens/new_wallpaper.dart';
-import 'package:wallpaper_app/screens/trending_wallpaper_screen.dart';
 import 'package:wallpaper_app/screens/wallpaper_suffle_screen.dart';
 // import 'package:image_cropper/image_cropper.dart';
 // import 'package:wallpaper_app/loading.dart';
@@ -31,7 +30,7 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(
-        length: 4,
+        length: 3,
         vsync: this); // Adjust the length based on the number of tabs
     _tabController.addListener(_handleTabSelection);
   }
@@ -84,7 +83,8 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
                 setState(() {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const FavouriteWallpaperScreen(),
+                      builder: (context) =>
+                          FavoriteImagesList(), //const FavouriteWallpaperScreen(),
                     ),
                   );
                 });
@@ -211,7 +211,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
               children: const [
                 GalleryWallpaperScreen(),
                 NewWallpaperScreen(),
-                TreningWallpaperScreen(),
                 WallpaprSuffleScreen(),
               ],
             ),
@@ -226,7 +225,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
                 tabs: const [
                   Tab(icon: Icon(Icons.image)),
                   Tab(icon: Icon(Icons.fiber_new)),
-                  Tab(icon: Icon(Icons.trending_up)),
                   Tab(icon: Icon(Icons.shuffle)),
                 ],
               ),

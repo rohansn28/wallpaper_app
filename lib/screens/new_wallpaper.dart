@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:wallpaper_app/full_Screen.dart';
 
 class NewWallpaperScreen extends StatefulWidget {
@@ -11,15 +12,27 @@ class NewWallpaperScreen extends StatefulWidget {
 }
 
 class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
+  // Function to fetch data from all collections
+  Stream<List<QuerySnapshot>> getAllImagesData() {
+    var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
+
+    var streams = collectionNames
+        .map((collection) =>
+            FirebaseFirestore.instance.collection(collection).snapshots())
+        .toList();
+
+    // Combine the streams using CombineLatestStream from rxdart
+    var combinedStream = CombineLatestStream.list(streams);
+
+    return combinedStream;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(4.0),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('images')
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
+      padding: const EdgeInsets.all(4.0),
+      child: StreamBuilder<List<QuerySnapshot>>(
+        stream: getAllImagesData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -30,22 +43,44 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
+          // List<String> imageUrls = [];
+          // List<String> documentIds = [];
 
-          List<String> imageUrls =
-              snapshot.data!.docs.map((doc) => doc['link'].toString()).toList();
+          List<QueryDocumentSnapshot> allDocuments = [];
 
-          print(imageUrls);
+          for (var querySnapshotList in snapshot.data!) {
+            for (var doc in querySnapshotList.docs) {
+              // print(doc.data().runtimeType);
+              // print(doc.get('link'));
 
-          // return ListView.builder(
-          //   itemCount: imageUrls.length,
-          //   itemBuilder: (context, index) {
-          //     return ListTile(
-          //       title: Image.network(imageUrls[index]),
-          //     );
-          //   },
-          // );
-          List<String> documentIds =
-              snapshot.data!.docs.map((doc) => doc.id).toList();
+              allDocuments.add(doc);
+              // print(doc.get('timestamp').runtimeType);
+              // print(doc.data());
+              // imageUrls.add(doc.get('link'));
+              // documentIds.add(doc.id);
+            }
+          }
+
+          // print(allDocuments[0].data());
+
+          allDocuments.sort(
+            (a, b) => b['timestamp'].compareTo(a['timestamp']),
+          );
+          // print(allDocuments[0].id);
+
+          // print(imageUrls);
+          // print(imageUrls.length);
+
+          // print(documentIds);
+          // print(documentIds.length);
+
+          // List<String> imageUrls =
+          //     snapshot.data!.docs.map((doc) => doc['link'].toString()).toList();
+
+          // print(imageUrls);
+
+          // List<String> documentIds =
+          //     snapshot.data!.docs.map((doc) => doc.id).toList();
           return GridView.builder(
             scrollDirection: Axis.vertical,
             physics: const BouncingScrollPhysics(),
@@ -55,7 +90,7 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
               mainAxisSpacing: 16.0,
               crossAxisSpacing: 16.0,
             ),
-            itemCount: imageUrls.length,
+            itemCount: allDocuments.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(1.0),
@@ -64,10 +99,8 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => FullScreen(
-                          urlLink: imageUrls[index],
-                          documentId: documentIds[index],
-                          isFavourite: snapshot.data!.docs
-                              .elementAt(index)['isfavourite'],
+                          urlLink: allDocuments[index].get('link'),
+                          documentId: allDocuments[index].id,
                         ),
                       ),
                     );
@@ -76,7 +109,7 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
                     child: CachedNetworkImage(
                       width: 200,
                       height: 200,
-                      imageUrl: snapshot.data!.docs.elementAt(index)['link'],
+                      imageUrl: allDocuments[index].get('link'),
                       imageBuilder: (context, imageProvider) {
                         return Container(
                           decoration: BoxDecoration(

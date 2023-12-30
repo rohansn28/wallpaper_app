@@ -1,6 +1,7 @@
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:wallpaper_app/full_Screen.dart';
 
 class WallpaprSuffleScreen extends StatefulWidget {
@@ -26,11 +27,17 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
       setState(() {
         isLoading = true;
       });
+      var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
 
-      var querySnapshot =
-          await FirebaseFirestore.instance.collection('images').get();
-      documents = querySnapshot.docs.toList();
-      documents.shuffle();
+      // var querySnapshot =
+      //     await FirebaseFirestore.instance.collection('images').get();
+      var streams = collectionNames
+          .map((collection) =>
+              FirebaseFirestore.instance.collection(collection).snapshots())
+          .toList();
+      streams.shuffle();
+      // documents = querySnapshot.docs.toList();
+      // documents.shuffle();
     } catch (e) {
       print('Error fetching or shuffling images: $e');
     } finally {
@@ -38,6 +45,20 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
         isLoading = false;
       });
     }
+  }
+
+  Stream<List<QuerySnapshot>> getAllImagesData() {
+    var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
+
+    var streams = collectionNames
+        .map((collection) =>
+            FirebaseFirestore.instance.collection(collection).snapshots())
+        .toList();
+
+    // Combine the streams using CombineLatestStream from rxdart
+    var combinedStream = CombineLatestStream.list(streams);
+
+    return combinedStream;
   }
 
   @override
@@ -48,9 +69,9 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('images').snapshots(),
+          : StreamBuilder<List<QuerySnapshot>>(
+              stream: getAllImagesData(),
+              //FirebaseFirestore.instance.collection('images').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -60,20 +81,29 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
-                var documents = snapshot.data!.docs;
-                documents.shuffle();
+                List<QueryDocumentSnapshot> allDocuments = [];
 
-                List<String> documentIds =
-                    snapshot.data!.docs.map((doc) => doc.id).toList();
+                for (var querySnapshotList in snapshot.data!) {
+                  for (var doc in querySnapshotList.docs) {
+                    allDocuments.add(doc);
+                  }
+                }
+
+                // var documents = snapshot.data!.docs;
+                allDocuments.shuffle();
+
+                // List<String> documentIds =
+                //     snapshot.data!.docs.map((doc) => doc.id).toList();
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                   ),
-                  itemCount: documents.length,
+                  itemCount: allDocuments.length,
                   itemBuilder: (context, index) {
-                    var imageUrl = documents[index]['link'];
+                    var imageUrl = allDocuments[index]
+                        .get('link'); //documents[index]['link'];
                     // Replace 'your_image_field' with the actual field containing the image URL.
                     return GestureDetector(
                       child: GridTile(
@@ -87,8 +117,7 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
                           MaterialPageRoute(
                             builder: (context) => FullScreen(
                               urlLink: imageUrl,
-                              documentId: documentIds[index],
-                              isFavourite: false,
+                              documentId: allDocuments[index].id,
                             ),
                           ),
                         );

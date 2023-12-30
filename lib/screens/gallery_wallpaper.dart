@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wallpaper_app/full_Screen.dart';
+import 'package:wallpaper_app/screens/category_screen.dart';
 
 class GalleryWallpaperScreen extends StatelessWidget {
   const GalleryWallpaperScreen({super.key});
@@ -23,63 +24,76 @@ class GalleryWallpaperScreen extends StatelessWidget {
         // List<String> documentIds =
         //     snapshot.data!.docs.map((doc) => doc.id).toList();
 
-        return GridView.builder(
-          scrollDirection: Axis.vertical,
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16.0,
-            crossAxisSpacing: 16.0,
-          ),
-          itemCount: documents.length,
-          itemBuilder: (BuildContext context, int index) {
-            // String url = snapshot.data!.docs.elementAt(index)['link'];
-            return Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: GestureDetector(
-                onTap: () async {
-                  var collection =
-                      FirebaseFirestore.instance.collection('collection_list');
-
-                  var allDocs = collection.get().then((querySnapshot) {
-                    print("Successfully completed");
-                    for (var docSnapshot in querySnapshot.docs) {
-                      print('${docSnapshot.id} => ${docSnapshot.data()}');
-                    }
-                  });
-                },
-                child: GridTile(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Image
-                      Image.network(
-                        'https://via.placeholder.com/150', // Replace with your image URL
-                        fit: BoxFit.cover,
-                      ),
-                      // Text in the center
-                      Center(
-                        child: Text(
-                          snapshot.data!.docs
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+            scrollDirection: Axis.vertical,
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+            ),
+            itemCount: documents.length,
+            itemBuilder: (BuildContext context, int index) {
+              // String url = snapshot.data!.docs.elementAt(index)['link'];
+              return Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CategoryScreen(
+                          title: snapshot.data!.docs
                               .elementAt(index)['category']
                               .toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
                         ),
                       ),
-                    ],
+                    );
+                    // var collection =
+                    //     FirebaseFirestore.instance.collection('collection_list');
+
+                    // var allDocs = collection.get().then((querySnapshot) {
+                    //   print("Successfully completed");
+                    //   for (var docSnapshot in querySnapshot.docs) {
+                    //     print(docSnapshot.data());
+                    //     // print('${docSnapshot.id} => ${docSnapshot.data()}');
+                    //   }
+                    // });
+                  },
+                  child: GridTile(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Image
+                        Image.network(
+                          'https://via.placeholder.com/150', // Replace with your image URL
+                          fit: BoxFit.cover,
+                        ),
+                        // Text in the center
+                        Center(
+                          child: Text(
+                            snapshot.data!.docs
+                                .elementAt(index)['category']
+                                .toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // child: Text(
+                    //   snapshot.data!.docs.elementAt(index)['category'].toString(),
+                    // ),
                   ),
-                  // child: Text(
-                  //   snapshot.data!.docs.elementAt(index)['category'].toString(),
-                  // ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );

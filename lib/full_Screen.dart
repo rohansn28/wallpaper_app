@@ -1,7 +1,9 @@
 // import 'dart:html';
 
 import 'dart:io';
+import 'dart:math';
 
+import 'package:animated_icon/animated_icon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -20,17 +22,16 @@ import 'package:wallpaper_app/utils/local_favorites.dart';
 final downloadCountProvider = StateProvider<int>((ref) => 0);
 
 class FullScreen extends ConsumerStatefulWidget {
-  FullScreen(
-      {super.key,
-      this.documents,
-      required this.urlLink,
-      required this.documentId,
-      required this.isFavourite});
+  FullScreen({
+    super.key,
+    this.documents,
+    required this.urlLink,
+    required this.documentId,
+  });
 
   final List<DocumentSnapshot>? documents;
   final String urlLink;
   final String documentId;
-  bool isFavourite;
 
   @override
   ConsumerState<FullScreen> createState() => _FullScreenState();
@@ -116,13 +117,6 @@ class _FullScreenState extends ConsumerState<FullScreen> {
     } else {
       permissionStatus = await Permission.storage.request().isGranted;
     }
-
-    // var status = await Permission.storage.status;
-    // if (!status.isGranted) {
-    //   var result = await Permission.storage.request();
-    //   return result.isGranted;
-    // }
-    // return true;
     return permissionStatus;
   }
 
@@ -169,7 +163,7 @@ class _FullScreenState extends ConsumerState<FullScreen> {
         );
       } catch (e) {
         // Handle errors if any
-        print('Error downloading wallpaper: $e');
+        //print('Error downloading wallpaper: $e');
         // Show a snackbar indicating the error
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -180,7 +174,7 @@ class _FullScreenState extends ConsumerState<FullScreen> {
     } else {
       // Show a snackbar indicating the need for storage permission
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Storage permission required to download wallpaper'),
         ),
       );
@@ -195,38 +189,51 @@ class _FullScreenState extends ConsumerState<FullScreen> {
       'Lock': WallpaperManager.LOCK_SCREEN,
       'Both': WallpaperManager.BOTH_SCREEN
     };
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(78, 0, 0, 0),
         elevation: 0.0,
         actions: [
-          IconButton(
-            icon: Icon(
-              widget.isFavourite ? Icons.favorite : Icons.favorite_border,
-              color: widget.isFavourite ? Colors.red : null,
-            ),
-            onPressed: () {
-              LocalFavorites.toggleFavorite(widget.documentId);
-              // toggleFavoriteStatus(widget.documentId, widget.isFavourite);
-              // setState(
-              //   () {
-              //     widget.isFavourite = !widget.isFavourite;
-              //   },
-              // );
+          FutureBuilder(
+            future: LocalFavorites.favIcon(widget.urlLink),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return AnimateIcon(
+                  animateIcon: AnimateIcons.heart,
+                  onTap: () {},
+                  iconType: IconType.onlyIcon,
+                  color: Colors.white,
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                IconData iconData =
+                    snapshot.data! ? Icons.favorite : Icons.favorite_border;
+                return IconButton(
+                  icon: Icon(
+                    iconData,
+                    color: iconData == Icons.favorite ? Colors.red : null,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      LocalFavorites.toggleFavorite(widget.urlLink);
+                    });
+                  },
+                );
+              }
             },
-          )
+          ),
         ],
       ),
       body: Center(
         child: Column(
           children: [
-            Container(
-              child: Expanded(
-                child: Image.network(
-                  widget.urlLink,
-                  fit: BoxFit.cover,
-                ),
+            Expanded(
+              child: Image.network(
+                widget.urlLink,
+                fit: BoxFit.cover,
               ),
             ),
             const SizedBox(
