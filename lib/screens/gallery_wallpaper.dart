@@ -37,8 +37,7 @@ class GalleryWallpaperScreen extends StatelessWidget {
         //   return catUrl;
         //   // print(catUrl);
         // });
-        print(
-            'assets/${snapshot.data!.docs.elementAt(0)['category'].toString()}.jpg');
+
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: GridView.builder(

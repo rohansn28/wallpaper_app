@@ -260,7 +260,9 @@ class _FullScreenState extends ConsumerState<FullScreen> {
                             child: const Text('Both'))
                       ],
                       cancelButton: CupertinoActionSheetAction(
-                        child: const Text('Cancel'),
+                        child: const Text(
+                          'Cancel',
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
