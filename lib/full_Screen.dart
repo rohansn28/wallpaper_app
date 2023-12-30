@@ -1,8 +1,4 @@
-// import 'dart:html';
-
 import 'dart:io';
-import 'dart:math';
-
 import 'package:animated_icon/animated_icon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';

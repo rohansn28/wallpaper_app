@@ -84,7 +84,7 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          FavoriteImagesList(), //const FavouriteWallpaperScreen(),
+                          const FavoriteImagesList(), //const FavouriteWallpaperScreen(),
                     ),
                   );
                 });

@@ -1,9 +1,10 @@
 // import 'dart:html';
 
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:wallpaper_app/full_Screen.dart';
+// import 'package:wallpaper_app/full_Screen.dart';
 import 'package:wallpaper_app/screens/category_screen.dart';
 
 class GalleryWallpaperScreen extends StatelessWidget {
@@ -20,10 +21,24 @@ class GalleryWallpaperScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           ); //CircularProgressIndicator();
         }
-        final List<DocumentSnapshot> documents = snapshot.data!.docs;
-        // List<String> documentIds =
-        //     snapshot.data!.docs.map((doc) => doc.id).toList();
 
+        final List<DocumentSnapshot> documents = snapshot.data!.docs;
+
+        //testing
+        // var first = documents.elementAt(1).get('category');
+        // var collection = FirebaseFirestore.instance.collection(first);
+
+        // var check =
+        //     collection.orderBy('timestamp', descending: true).limit(1).get();
+
+        // var checkVal = check.then((value) {
+        //   var someData = value.docs;
+        //   var catUrl = someData[0].data()['link'];
+        //   return catUrl;
+        //   // print(catUrl);
+        // });
+        print(
+            'assets/${snapshot.data!.docs.elementAt(0)['category'].toString()}.jpg');
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: GridView.builder(
@@ -37,7 +52,6 @@ class GalleryWallpaperScreen extends StatelessWidget {
             ),
             itemCount: documents.length,
             itemBuilder: (BuildContext context, int index) {
-              // String url = snapshot.data!.docs.elementAt(index)['link'];
               return Padding(
                 padding: const EdgeInsets.all(1.0),
                 child: GestureDetector(
@@ -51,32 +65,23 @@ class GalleryWallpaperScreen extends StatelessWidget {
                         ),
                       ),
                     );
-                    // var collection =
-                    //     FirebaseFirestore.instance.collection('collection_list');
-
-                    // var allDocs = collection.get().then((querySnapshot) {
-                    //   print("Successfully completed");
-                    //   for (var docSnapshot in querySnapshot.docs) {
-                    //     print(docSnapshot.data());
-                    //     // print('${docSnapshot.id} => ${docSnapshot.data()}');
-                    //   }
-                    // });
                   },
                   child: GridTile(
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        // Image
-                        Image.network(
-                          'https://via.placeholder.com/150', // Replace with your image URL
+                        Image.asset(
+                          'assets/${snapshot.data!.docs.elementAt(index)['category'].toString()}.jpg',
                           fit: BoxFit.cover,
                         ),
+
                         // Text in the center
                         Center(
                           child: Text(
                             snapshot.data!.docs
                                 .elementAt(index)['category']
-                                .toString(),
+                                .toString()
+                                .toUpperCase(),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
@@ -99,7 +104,6 @@ class GalleryWallpaperScreen extends StatelessWidget {
     );
   }
 }
-
 
 // class GalleryWallpaperScreen extends StatefulWidget {
 //   const GalleryWallpaperScreen({super.key});
