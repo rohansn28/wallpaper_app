@@ -24,7 +24,7 @@ class Popular extends StatefulWidget {
 class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentIndex = 0;
-  final List<String> tabTitles = ['Gallery', 'Recent', 'Trending', 'Random'];
+  final List<String> tabTitles = ['Gallery', 'Recent', 'Random'];
 
   @override
   void initState() {
@@ -90,41 +90,41 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
                 });
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.paid),
-              title: const Text('Remove Ads'),
-              onTap: () {
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.textsms_rounded),
-              title: const Text('Rate Us'),
-              onTap: () {
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.feedback),
-              title: const Text('Feedback'),
-              onTap: () {
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                setState(() {});
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.paid),
+            //   title: const Text('Remove Ads'),
+            //   onTap: () {
+            //     setState(() {});
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.textsms_rounded),
+            //   title: const Text('Rate Us'),
+            //   onTap: () {
+            //     setState(() {});
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.feedback),
+            //   title: const Text('Feedback'),
+            //   onTap: () {
+            //     setState(() {});
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.share),
+            //   title: const Text('Share'),
+            //   onTap: () {
+            //     setState(() {});
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text('Settings'),
+            //   onTap: () {
+            //     setState(() {});
+            //   },
+            // ),
           ],
         ),
       ),
@@ -202,7 +202,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
       //   ),
       // ),
       body: Column(
-        // mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
             fit: FlexFit.loose,
@@ -230,68 +229,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (context) =>
-          //                   const GalleryWallpaperScreen(),
-          //             ),
-          //           );
-          //         },
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: Colors.transparent),
-          //         child: const Icon(Icons.image),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (context) => const NewWallpaperScreen(),
-          //             ),
-          //           );
-          //         },
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: Colors.transparent),
-          //         child: const Icon(Icons.fiber_new),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (context) =>
-          //                   const TreningWallpaperScreen(),
-          //             ),
-          //           );
-          //         },
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: Colors.transparent),
-          //         child: const Icon(Icons.trending_up),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           Navigator.of(context).push(
-          //             MaterialPageRoute(
-          //               builder: (context) => const WallpaprSuffleScreen(),
-          //             ),
-          //           );
-          //         },
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: Colors.transparent),
-          //         child: const Icon(Icons.shuffle),
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );

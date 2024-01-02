@@ -22,12 +22,26 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
     fetchAndShuffleImages();
   }
 
+  Future<List<String>> collectionList() async {
+    List<String> collectionNames = [];
+    await FirebaseFirestore.instance
+        .collection('collection_list')
+        .get()
+        .then((querySnapshot) {
+      for (var docSnapshot in querySnapshot.docs) {
+        collectionNames.add(docSnapshot.data()['category']);
+      }
+    });
+    return collectionNames;
+  }
+
   Future<void> fetchAndShuffleImages() async {
     try {
       setState(() {
         isLoading = true;
       });
-      var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
+
+      List<String> collectionNames = await collectionList();
 
       // var querySnapshot =
       //     await FirebaseFirestore.instance.collection('images').get();
@@ -48,6 +62,7 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
   }
 
   Stream<List<QuerySnapshot>> getAllImagesData() {
+    // print(collectionList());
     var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
 
     var streams = collectionNames

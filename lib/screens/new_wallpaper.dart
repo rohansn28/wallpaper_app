@@ -37,7 +37,7 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
-            ); //CircularProgressIndicator();
+            );
           }
 
           if (snapshot.hasError) {
@@ -50,9 +50,6 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
 
           for (var querySnapshotList in snapshot.data!) {
             for (var doc in querySnapshotList.docs) {
-              // print(doc.data().runtimeType);
-              // print(doc.get('link'));
-
               allDocuments.add(doc);
               // print(doc.get('timestamp').runtimeType);
               // print(doc.data());
@@ -61,18 +58,9 @@ class _NewWallpaperScreenState extends State<NewWallpaperScreen> {
             }
           }
 
-          // print(allDocuments[0].data());
-
           allDocuments.sort(
             (a, b) => b['timestamp'].compareTo(a['timestamp']),
           );
-          // print(allDocuments[0].id);
-
-          // print(imageUrls);
-          // print(imageUrls.length);
-
-          // print(documentIds);
-          // print(documentIds.length);
 
           // List<String> imageUrls =
           //     snapshot.data!.docs.map((doc) => doc['link'].toString()).toList();

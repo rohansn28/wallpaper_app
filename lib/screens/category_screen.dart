@@ -52,31 +52,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       );
                     },
                     child: GridTile(
-                      child: Container(
-                        child: CachedNetworkImage(
-                          width: 200,
-                          height: 200,
-                          imageUrl:
-                              snapshot.data!.docs.elementAt(index)['link'],
-                          imageBuilder: (context, imageProvider) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                        Colors.black54.withOpacity(0.2),
-                                        BlendMode.colorBurn)),
+                      child: CachedNetworkImage(
+                        width: 200,
+                        height: 200,
+                        imageUrl: snapshot.data!.docs.elementAt(index)['link'],
+                        imageBuilder: (context, imageProvider) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                // colorFilter: ColorFilter.mode(
+                                //   Colors.black54.withOpacity(0.2),
+                                //   BlendMode.colorBurn,
+                                // ),
                               ),
-                            );
-                          },
-                          placeholder: (context, url) =>
-                              const Text('Loading...'),
-                          //const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        ),
+                            ),
+                          );
+                        },
+                        placeholder: (context, url) => const Text('Loading...'),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                     ),
                   ),

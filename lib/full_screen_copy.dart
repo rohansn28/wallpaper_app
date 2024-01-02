@@ -13,47 +13,94 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:share_plus/share_plus.dart';
-import 'package:wallpaper_app/utils/google_ads.dart';
 import 'package:wallpaper_app/utils/local_favorites.dart';
 
 final downloadCountProvider = StateProvider<int>((ref) => 0);
 
-class FullScreen extends ConsumerStatefulWidget {
-  const FullScreen({
+class FullScreenCopy extends ConsumerStatefulWidget {
+  const FullScreenCopy({
     super.key,
     this.documents,
     required this.urlLink,
     required this.documentId,
+    required this.imageUrls,
   });
 
   final List<DocumentSnapshot>? documents;
   final String urlLink;
   final String documentId;
+  final List<String> imageUrls;
 
   @override
-  ConsumerState<FullScreen> createState() => _FullScreenState();
+  ConsumerState<FullScreenCopy> createState() => _FullScreenCopyState();
 }
 
-class _FullScreenState extends ConsumerState<FullScreen> {
-  late AdManager adManager;
-  bool isAdLoaded = false;
+class _FullScreenCopyState extends ConsumerState<FullScreenCopy>
+    with SingleTickerProviderStateMixin {
+  late PageController _pageController;
   @override
   void initState() {
     super.initState();
-    adManager = AdManager(onAdLoaded: (bool loaded) {
-      setState(() {
-        isAdLoaded = loaded;
-      });
-    });
-    adManager.initBannerAd();
-
-    adManager.initInterstitialAd();
+    initBannerAd();
+    initInterstitialAd();
+    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    adManager.disposeBannerAd();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  late BannerAd bannerAd;
+  bool isAdLoaded = false;
+  var adUnit = "ca-app-pub-3940256099942544/6300978111";
+
+  initBannerAd() {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: adUnit,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(
+            () {
+              isAdLoaded = true;
+            },
+          );
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          // print(error);
+        },
+      ),
+      request: const AdRequest(),
+    );
+    //loads the banner ad
+    bannerAd.load();
+  }
+
+  late InterstitialAd interstitialAd;
+  bool isInterstitialAdLoaded = false;
+  //test ad it
+  var adUnitInterstitial =
+      "ca-app-pub-3940256099942544/1033173712"; //test ad it
+
+  initInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: adUnitInterstitial,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          interstitialAd = ad;
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (error) {
+          interstitialAd.dispose();
+        },
+      ),
+    );
   }
 
   Future<void> toggleFavoriteStatus(
@@ -88,7 +135,7 @@ class _FullScreenState extends ConsumerState<FullScreen> {
         Directory? directory = await getExternalStorageDirectory();
         if (directory == null) {
           // Handle the case where getExternalStorageDirectory returns null
-          print('Error: External storage directory is null');
+          // print('Error: External storage directory is null');
           return;
         }
 
@@ -110,7 +157,7 @@ class _FullScreenState extends ConsumerState<FullScreen> {
         // Check if the threshold is reached
         if (ref.read(downloadCountProvider.notifier).state == 2) {
           // Display an ad (replace this with your ad display logic)
-          adManager.interstitialAd.show();
+          interstitialAd.show();
           // Reset the counter after displaying the ad
           ref.read(downloadCountProvider.notifier).state = 0;
         }
@@ -190,9 +237,18 @@ class _FullScreenState extends ConsumerState<FullScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Image.network(
-              widget.urlLink,
-              fit: BoxFit.cover,
+            child: PageView(
+              controller: _pageController,
+              children: widget.imageUrls.map(
+                (imageurl) {
+                  return Container(
+                    child: Image.network(
+                      imageurl,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ).toList(),
             ),
           ),
           const SizedBox(
@@ -286,10 +342,7 @@ class _FullScreenState extends ConsumerState<FullScreen> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  downloadWallpaper(
-                    context,
-                    ref,
-                  );
+                  downloadWallpaper(context, ref); // Ensure to use 'await' here
                 },
                 icon: const Icon(Icons.file_download),
                 label: const Text('Download'),
@@ -298,9 +351,9 @@ class _FullScreenState extends ConsumerState<FullScreen> {
           ),
           isAdLoaded
               ? SizedBox(
-                  height: adManager.bannerAd.size.height.toDouble(),
-                  width: adManager.bannerAd.size.width.toDouble(),
-                  child: AdWidget(ad: adManager.bannerAd),
+                  height: bannerAd.size.height.toDouble(),
+                  width: bannerAd.size.width.toDouble(),
+                  child: AdWidget(ad: bannerAd),
                 )
               : const SizedBox(
                   height: 20,
