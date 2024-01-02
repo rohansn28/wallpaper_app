@@ -61,19 +61,34 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
     }
   }
 
-  Stream<List<QuerySnapshot>> getAllImagesData() {
-    // print(collectionList());
-    var collectionNames = ['nature', 'cars', 'anime', 'people', 'images'];
+  Future<Stream<List<QuerySnapshot>>> getAllImagesDataStream() async {
+    try {
+      // Fetch documents from the collection_list
+      QuerySnapshot collectionListSnapshot =
+          await FirebaseFirestore.instance.collection('collection_list').get();
 
-    var streams = collectionNames
-        .map((collection) =>
-            FirebaseFirestore.instance.collection(collection).snapshots())
-        .toList();
+      // Extract category names from the documents in collection_list
+      List<String> categoryNames = collectionListSnapshot.docs
+          .map((doc) => doc['category'] as String?)
+          .where((category) => category != null)
+          .cast<String>()
+          .toList();
 
-    // Combine the streams using CombineLatestStream from rxdart
-    var combinedStream = CombineLatestStream.list(streams);
+      // Create streams for each category
+      var streams = categoryNames
+          .map((category) =>
+              FirebaseFirestore.instance.collection(category).snapshots())
+          .toList();
 
-    return combinedStream;
+      // Combine the streams using CombineLatestStream from rxdart
+      var combinedStream = CombineLatestStream.list(streams);
+
+      return combinedStream;
+    } catch (e) {
+      print('Error in getAllImagesDataStream: $e');
+      // Return an empty stream or handle the error appropriately
+      return Stream.value([]);
+    }
   }
 
   @override
@@ -82,65 +97,79 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
       onRefresh: fetchAndShuffleImages,
       child: isLoading
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: Text('Loading...'),
             )
-          : StreamBuilder<List<QuerySnapshot>>(
-              stream: getAllImagesData(),
-              //FirebaseFirestore.instance.collection('images').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-
-                List<QueryDocumentSnapshot> allDocuments = [];
-
-                for (var querySnapshotList in snapshot.data!) {
-                  for (var doc in querySnapshotList.docs) {
-                    allDocuments.add(doc);
+          : Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: FutureBuilder<Stream<List<QuerySnapshot>>>(
+                future: getAllImagesDataStream(),
+                //FirebaseFirestore.instance.collection('images').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Text('Loading...'));
                   }
-                }
 
-                // var documents = snapshot.data!.docs;
-                allDocuments.shuffle();
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  Stream<List<QuerySnapshot>> imagesDataStream =
+                      snapshot.data ?? Stream.value([]);
 
-                // List<String> documentIds =
-                //     snapshot.data!.docs.map((doc) => doc.id).toList();
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                  ),
-                  itemCount: allDocuments.length,
-                  itemBuilder: (context, index) {
-                    var imageUrl = allDocuments[index]
-                        .get('link'); //documents[index]['link'];
-                    // Replace 'your_image_field' with the actual field containing the image URL.
-                    return GestureDetector(
-                      child: GridTile(
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
+                  List<QueryDocumentSnapshot> allDocuments = [];
+
+                  return StreamBuilder<List<QuerySnapshot>>(
+                    stream: imagesDataStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...');
+                      }
+
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+
+                      for (var snapshotdata in snapshot.data!) {
+                        for (var data in snapshotdata.docs) {
+                          allDocuments.add(data);
+                        }
+                      }
+
+                      allDocuments.shuffle();
+
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8.0,
+                          mainAxisSpacing: 8.0,
                         ),
-                      ),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => FullScreen(
-                              urlLink: imageUrl,
-                              documentId: allDocuments[index].id,
+                        itemCount: allDocuments.length,
+                        itemBuilder: (context, index) {
+                          var imageUrl = allDocuments[index].get('link');
+                          return GestureDetector(
+                            child: GridTile(
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => FullScreen(
+                                    urlLink: imageUrl,
+                                    documentId: allDocuments[index].id,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
     );
   }

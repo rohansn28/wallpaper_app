@@ -68,6 +68,24 @@ class GalleryWallpaperScreen extends StatelessWidget {
                           'assets/${snapshot.data!.docs.elementAt(index)['category'].toString()}.jpg',
                           fit: BoxFit.cover,
                         ),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.black.withOpacity(
+                                    0.8), // Darker color at the corners
+                                Colors.black
+                                    .withOpacity(0.5), // Medium darkness
+                                Colors.black.withOpacity(
+                                    0.3), // Lighter color in the center
+                              ],
+                            ),
+                          ),
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
 
                         // Text in the center
                         Center(
@@ -78,7 +96,7 @@ class GalleryWallpaperScreen extends StatelessWidget {
                                 .toUpperCase(),
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18.0,
+                              fontSize: 22.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
