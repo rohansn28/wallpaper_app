@@ -1,20 +1,18 @@
-import 'dart:io';
 import 'package:animated_icon/animated_icon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import 'package:share_plus/share_plus.dart';
 import 'package:wallpaper_app/utils/google_ads.dart';
 import 'package:wallpaper_app/utils/local_favorites.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 final downloadCountProvider = StateProvider<int>((ref) => 0);
 
@@ -68,78 +66,78 @@ class _FullScreenState extends ConsumerState<FullScreen> {
   }
 
   // Function to request storage permission
-  Future<bool> requestStoragePermission() async {
-    bool permissionStatus;
-    final deviceInfo = await DeviceInfoPlugin().androidInfo;
+  // Future<bool> requestStoragePermission() async {
+  //   bool permissionStatus;
+  //   final deviceInfo = await DeviceInfoPlugin().androidInfo;
 
-    if (deviceInfo.version.sdkInt > 32) {
-      permissionStatus = await Permission.photos.request().isGranted;
-    } else {
-      permissionStatus = await Permission.storage.request().isGranted;
-    }
-    return permissionStatus;
-  }
+  //   if (deviceInfo.version.sdkInt > 32) {
+  //     permissionStatus = await Permission.photos.request().isGranted;
+  //   } else {
+  //     permissionStatus = await Permission.storage.request().isGranted;
+  //   }
+  //   return permissionStatus;
+  // }
 
-  Future<void> downloadWallpaper(BuildContext context, WidgetRef ref) async {
-    bool hasPermission = await requestStoragePermission();
+  // Future<void> downloadWallpaper(BuildContext context, WidgetRef ref) async {
+  //   bool hasPermission = await requestStoragePermission();
 
-    if (hasPermission) {
-      try {
-        Directory? directory = await getExternalStorageDirectory();
-        if (directory == null) {
-          // Handle the case where getExternalStorageDirectory returns null
-          print('Error: External storage directory is null');
-          return;
-        }
+  //   if (hasPermission) {
+  //     try {
+  //       Directory? directory = await getExternalStorageDirectory();
+  //       if (directory == null) {
+  //         // Handle the case where getExternalStorageDirectory returns null
+  //         print('Error: External storage directory is null');
+  //         return;
+  //       }
 
-        var file = await DefaultCacheManager().getSingleFile(widget.urlLink);
+  //       var file = await DefaultCacheManager().getSingleFile(widget.urlLink);
 
-        // Save the file to device storage
-        String path = directory.path;
+  //       // Save the file to device storage
+  //       String path = directory.path;
 
-        File imageFile = File('$path/${widget.documentId}.jpg');
+  //       File imageFile = File('$path/${widget.documentId}.jpg');
 
-        await imageFile.writeAsBytes(await file.readAsBytes());
+  //       await imageFile.writeAsBytes(await file.readAsBytes());
 
-        // Save the file to the gallery
-        await ImageGallerySaver.saveFile(imageFile.path);
+  //       // Save the file to the gallery
+  //       await ImageGallerySaver.saveFile(imageFile.path);
 
-        // Increment the download counter using Riverpod
-        ref.read(downloadCountProvider.notifier).state++;
+  //       // Increment the download counter using Riverpod
+  //       ref.read(downloadCountProvider.notifier).state++;
 
-        // Check if the threshold is reached
-        if (ref.read(downloadCountProvider.notifier).state == 2) {
-          // Display an ad (replace this with your ad display logic)
-          adManager.interstitialAd.show();
-          // Reset the counter after displaying the ad
-          ref.read(downloadCountProvider.notifier).state = 0;
-        }
+  //       // Check if the threshold is reached
+  //       if (ref.read(downloadCountProvider.notifier).state == 2) {
+  //         // Display an ad (replace this with your ad display logic)
+  //         adManager.interstitialAd.show();
+  //         // Reset the counter after displaying the ad
+  //         ref.read(downloadCountProvider.notifier).state = 0;
+  //       }
 
-        // Show a snackbar indicating successful download
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Wallpaper downloaded successfully'),
-          ),
-        );
-      } catch (e) {
-        // Handle errors if any
-        //print('Error downloading wallpaper: $e');
-        // Show a snackbar indicating the error
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error downloading wallpaper'),
-          ),
-        );
-      }
-    } else {
-      // Show a snackbar indicating the need for storage permission
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Storage permission required to download wallpaper'),
-        ),
-      );
-    }
-  }
+  //       // Show a snackbar indicating successful download
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Wallpaper downloaded successfully'),
+  //         ),
+  //       );
+  //     } catch (e) {
+  //       // Handle errors if any
+  //       //print('Error downloading wallpaper: $e');
+  //       // Show a snackbar indicating the error
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Error downloading wallpaper'),
+  //         ),
+  //       );
+  //     }
+  //   } else {
+  //     // Show a snackbar indicating the need for storage permission
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Storage permission required to download wallpaper'),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -279,21 +277,22 @@ class _FullScreenState extends ConsumerState<FullScreen> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  Share.share(widget.urlLink, subject: 'Look what I made!');
+                  Share.share(widget.urlLink,
+                      subject: 'My Favourite Wallpaper!');
                 },
                 icon: const Icon(Icons.share_outlined),
                 label: const Text('Share'),
               ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  downloadWallpaper(
-                    context,
-                    ref,
-                  );
-                },
-                icon: const Icon(Icons.file_download),
-                label: const Text('Download'),
-              ),
+              // ElevatedButton.icon(
+              //   onPressed: () {
+              //     downloadWallpaper(
+              //       context,
+              //       ref,
+              //     );
+              //   },
+              //   icon: const Icon(Icons.file_download),
+              //   label: const Text('Download'),
+              // ),
             ],
           ),
           isAdLoaded

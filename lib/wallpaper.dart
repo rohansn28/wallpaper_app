@@ -1,18 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:wallpaper/categories.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
-// import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-// import 'package:wallpaper_app/full_Screen.dart';
 import 'package:wallpaper_app/screens/favourites_screen.dart';
 import 'package:wallpaper_app/screens/gallery_wallpaper.dart';
 import 'package:wallpaper_app/screens/new_wallpaper.dart';
 import 'package:wallpaper_app/screens/wallpaper_suffle_screen.dart';
-// import 'package:image_cropper/image_cropper.dart';
-// import 'package:wallpaper_app/loading.dart';
-// import 'package:wallpaper/sucessdialog.dart';
 
 class Popular extends StatefulWidget {
   const Popular({super.key});
@@ -90,41 +80,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
                 });
               },
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.paid),
-            //   title: const Text('Remove Ads'),
-            //   onTap: () {
-            //     setState(() {});
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.textsms_rounded),
-            //   title: const Text('Rate Us'),
-            //   onTap: () {
-            //     setState(() {});
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.feedback),
-            //   title: const Text('Feedback'),
-            //   onTap: () {
-            //     setState(() {});
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.share),
-            //   title: const Text('Share'),
-            //   onTap: () {
-            //     setState(() {});
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.settings),
-            //   title: const Text('Settings'),
-            //   onTap: () {
-            //     setState(() {});
-            //   },
-            // ),
           ],
         ),
       ),
@@ -132,75 +87,6 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
         title: Text(tabTitles[_tabController.index]),
         centerTitle: true,
       ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(4.0),
-      //   child: StreamBuilder<QuerySnapshot>(
-      //     stream: FirebaseFirestore.instance.collection('images').snapshots(),
-      //     builder: (context, snapshot) {
-      //       if (!snapshot.hasData) {
-      //         return const CircularProgressIndicator();
-      //       }
-      //       final List<DocumentSnapshot> documents = snapshot.data!.docs;
-      //       return GridView.builder(
-      //         scrollDirection: Axis.vertical,
-      //         physics: const BouncingScrollPhysics(),
-      //         shrinkWrap: true,
-      //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      //           crossAxisCount: 2,
-      //           mainAxisSpacing: 16.0,
-      //           crossAxisSpacing: 16.0,
-      //         ),
-      //         itemCount: documents.length,
-      //         itemBuilder: (BuildContext context, int index) {
-      //           String url = snapshot.data!.docs.elementAt(index)['link'];
-      //           return Padding(
-      //             padding: const EdgeInsets.all(1.0),
-      //             child: GestureDetector(
-      //               onTap: () {
-      //                 Navigator.of(context).push(
-      //                   MaterialPageRoute(
-      //                     builder: (context) => FullScreen(
-      //                       documents: documents,
-      //                       urlLink: url,
-      //                     ),
-      //                   ),
-      //                 );
-      //               },
-      //               child: GridTile(
-      //                 child: Container(
-      //                   child: CachedNetworkImage(
-      //                     width: 200,
-      //                     height: 200,
-      //                     imageUrl:
-      //                         snapshot.data!.docs.elementAt(index)['link'],
-      //                     imageBuilder: (context, imageProvider) {
-      //                       return Container(
-      //                         decoration: BoxDecoration(
-      //                           borderRadius: BorderRadius.circular(10),
-      //                           image: DecorationImage(
-      //                               image: imageProvider,
-      //                               fit: BoxFit.cover,
-      //                               colorFilter: ColorFilter.mode(
-      //                                   Colors.black54.withOpacity(0.2),
-      //                                   BlendMode.colorBurn)),
-      //                         ),
-      //                       );
-      //                     },
-      //                     placeholder: (context, url) =>
-      //                         const Text('Loading...'),
-      //                     //const CircularProgressIndicator(),
-      //                     errorWidget: (context, url, error) =>
-      //                         const Icon(Icons.error),
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //           );
-      //         },
-      //       );
-      //     },
-      //   ),
-      // ),
       body: Column(
         children: [
           Flexible(

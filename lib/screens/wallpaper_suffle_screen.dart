@@ -43,15 +43,11 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
 
       List<String> collectionNames = await collectionList();
 
-      // var querySnapshot =
-      //     await FirebaseFirestore.instance.collection('images').get();
       var streams = collectionNames
           .map((collection) =>
               FirebaseFirestore.instance.collection(collection).snapshots())
           .toList();
       streams.shuffle();
-      // documents = querySnapshot.docs.toList();
-      // documents.shuffle();
     } catch (e) {
       print('Error fetching or shuffling images: $e');
     } finally {
@@ -103,7 +99,6 @@ class _WallpaprSuffleScreenState extends State<WallpaprSuffleScreen> {
               padding: const EdgeInsets.all(4.0),
               child: FutureBuilder<Stream<List<QuerySnapshot>>>(
                 future: getAllImagesDataStream(),
-                //FirebaseFirestore.instance.collection('images').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: Text('Loading...'));

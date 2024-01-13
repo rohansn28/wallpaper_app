@@ -5,7 +5,7 @@ class AdManager {
 
   late BannerAd bannerAd;
   bool isAdLoaded = false;
-  var adUnit = "ca-app-pub-3940256099942544/6300978111";
+  var adUnit = "ca-app-pub-4854114877151545/6692115403";
   final Function(bool) onAdLoaded;
 
   initBannerAd() {
@@ -34,7 +34,7 @@ class AdManager {
   late InterstitialAd interstitialAd;
   bool isInterstitialAdLoaded = false;
 
-  var adUnitInterstitial = "ca-app-pub-3940256099942544/1033173712";
+  var adUnitInterstitial = "ca-app-pub-4854114877151545/5810278573";
 
   initInterstitialAd() {
     InterstitialAd.load(

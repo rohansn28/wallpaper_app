@@ -8,7 +8,7 @@
 
 
     <application
-        android:label="wallpaper_app"
+        android:label="HD Wallpaper"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -41,6 +41,6 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-4854114877151545~2427752554"/>
     </application>
 </manifest>
