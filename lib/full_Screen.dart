@@ -1,4 +1,5 @@
 import 'package:animated_icon/animated_icon.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,14 +20,10 @@ final downloadCountProvider = StateProvider<int>((ref) => 0);
 class FullScreen extends ConsumerStatefulWidget {
   const FullScreen({
     super.key,
-    this.documents,
     required this.urlLink,
-    required this.documentId,
   });
 
-  final List<DocumentSnapshot>? documents;
   final String urlLink;
-  final String documentId;
 
   @override
   ConsumerState<FullScreen> createState() => _FullScreenState();
@@ -54,16 +51,18 @@ class _FullScreenState extends ConsumerState<FullScreen> {
     super.dispose();
   }
 
-  Future<void> toggleFavoriteStatus(
-      String documentId, bool currentStatus) async {
-    CollectionReference imagesCollection =
-        FirebaseFirestore.instance.collection('images');
+  //this function is not in use
+  // Future<void> toggleFavoriteStatus(
+  //     String documentId, bool currentStatus) async {
 
-    // Update the 'favorite' field to the opposite of its current status
-    await imagesCollection.doc(documentId).update({
-      'isfavourite': !currentStatus,
-    });
-  }
+  //   CollectionReference imagesCollection =
+  //       FirebaseFirestore.instance.collection('images');
+
+  //   // Update the 'favorite' field to the opposite of its current status
+  //   await imagesCollection.doc(documentId).update({
+  //     'isfavourite': !currentStatus,
+  //   });
+  // }
 
   // Function to request storage permission
   // Future<bool> requestStoragePermission() async {
@@ -187,10 +186,34 @@ class _FullScreenState extends ConsumerState<FullScreen> {
       ),
       body: Column(
         children: [
+          // Expanded(
+          //   child: Image.network(
+          //     widget.urlLink,
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Expanded(
-            child: Image.network(
-              widget.urlLink,
-              fit: BoxFit.cover,
+            child: CachedNetworkImage(
+              // width: 200,
+              // height: 200,
+              imageUrl: widget.urlLink,
+              imageBuilder: (context, imageProvider) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                      // colorFilter: ColorFilter.mode(
+                      //   Colors.black54.withOpacity(0.2),
+                      //   BlendMode.colorBurn,
+                      // ),
+                    ),
+                  ),
+                );
+              },
+              placeholder: (context, url) => const Text('Loading...'),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           const SizedBox(
@@ -277,8 +300,11 @@ class _FullScreenState extends ConsumerState<FullScreen> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  Share.share(widget.urlLink,
-                      subject: 'My Favourite Wallpaper!');
+                  Share.share(
+                    'Hey Chckout this awsome wallpaper',
+                    // 'Hey Chckout this awsome wallpaper ${widget.urlLink}',
+                    subject: 'My Favourite Wallpaper!',
+                  );
                 },
                 icon: const Icon(Icons.share_outlined),
                 label: const Text('Share'),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallpaper_app/screens/favourites_screen.dart';
 import 'package:wallpaper_app/screens/gallery_wallpaper.dart';
-import 'package:wallpaper_app/screens/new_wallpaper.dart';
 import 'package:wallpaper_app/screens/wallpaper_suffle_screen.dart';
 
 class Popular extends StatefulWidget {
@@ -14,13 +13,13 @@ class Popular extends StatefulWidget {
 class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentIndex = 0;
-  final List<String> tabTitles = ['Gallery', 'Recent', 'Random'];
+  final List<String> tabTitles = ['Gallery', 'Random'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(
-        length: 3,
+        length: 2,
         vsync: this); // Adjust the length based on the number of tabs
     _tabController.addListener(_handleTabSelection);
   }
@@ -95,21 +94,19 @@ class _PopularState extends State<Popular> with SingleTickerProviderStateMixin {
               controller: _tabController,
               children: const [
                 GalleryWallpaperScreen(),
-                NewWallpaperScreen(),
                 WallpaprSuffleScreen(),
               ],
             ),
           ),
           // Navigation bar with swipe effect
           Container(
-            color: Colors.blue, // Customize the color as needed
+            color: Colors.blue,
             child: Material(
               color: Colors.black,
               child: TabBar(
                 controller: _tabController,
                 tabs: const [
                   Tab(icon: Icon(Icons.image)),
-                  Tab(icon: Icon(Icons.fiber_new)),
                   Tab(icon: Icon(Icons.shuffle)),
                 ],
               ),

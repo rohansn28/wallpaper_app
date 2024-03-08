@@ -38,22 +38,17 @@ dependencies:
   firebase_core: ^2.24.2
   cloud_firestore: ^4.13.5
   cached_network_image: ^3.3.0
-  # flutter_cache_manager: ^3.3.1
   flutter_wallpaper_manager: ^0.0.4
   share_plus: ^7.2.1
   flutter_image_compress: ^2.1.0
-  # image_cropper: ^5.0.1
-  photo_view: ^0.14.0
   flutter_cache_manager: ^3.3.1
   path_provider: ^2.1.1
-  permission_handler: ^11.0.1
-  device_info_plus: ^9.1.1
-  image_gallery_saver: ^2.0.3
   google_mobile_ads: ^4.0.0
   flutter_riverpod: ^2.4.9
   shared_preferences: ^2.2.2
   rxdart: ^0.27.7
   animated_icon: ^0.0.5
+  http: ^1.1.0
 
 
 
@@ -73,6 +68,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/logo.png"
+  adaptive_icon_background: "#ed1e79"
   min_sdk_android: 21
 
 # For information on the generic Dart part of this file, see the
@@ -88,9 +84,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets\cars.jpg
+    - assets\car.jpg
     - assets\anime.jpg
-    - assets\images.jpg
+    - assets\image.jpg
     - assets\nature.jpg
     - assets\people.jpg
     - assets\logo.png

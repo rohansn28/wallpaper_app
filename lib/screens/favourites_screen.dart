@@ -47,7 +47,6 @@ class FavoriteImagesList extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => FullScreen(
                           urlLink: url,
-                          documentId: favorites[index],
                         ),
                       ),
                     );

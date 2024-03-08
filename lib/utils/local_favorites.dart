@@ -25,6 +25,7 @@ class LocalFavorites {
   }
 
   static Future<void> toggleFavorite(String imageUrl) async {
+    print('local fav wala running');
     final prefs = await SharedPreferences.getInstance();
     List<String> favorites = await getFavorites();
 
